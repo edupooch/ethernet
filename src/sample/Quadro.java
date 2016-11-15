@@ -1,6 +1,8 @@
 package sample;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.zip.CRC32;
 
 /**
  * Created by nilton-pc on 14/11/2016.
@@ -12,11 +14,13 @@ public class Quadro {
     private static final int INDICE_SOF = 7;
     private static final int TAMANHO_TAMANHO = 2;
     private static final int INDICE_PREAMBULO = 0;
-    public static final int PADRAO_PREAMBULO = (byte) 0b10101010;
-    public static final byte PADRAO_SOF = (byte) 0b10101011;
+    private static final int PADRAO_PREAMBULO = (byte) 0b10101010;
+    private static final byte PADRAO_SOF = (byte) 0b10101011;
     private static final int INDICE_LENGHT = 4;
     private static final int INDICE_FONTE = 2;
     private static final int INDICE_DESTINO = 3;
+    private static final int INDICE_DADOS = 5;
+    private static final int INDICE_CRC = 7;
     private int tamanhoEnderecoDestino;
     private int ind_dados;
 
@@ -35,17 +39,35 @@ public class Quadro {
         } else if (dados.length() > 1500){
             System.out.println("Esse dado é muito grande para ser transmitido");
         } else { // lenght entre 1 e 1500
-
+            quadro = new byte[8][];
             definePreambulo();
             setEnderecoDestino(enderecoDestino);
             setEndrecoFonte(enderecoFonte);
-            setTamanho(dados);
+            setTamanho(dados.length());
             setDados(dados);
+            padding();
+            crc();
         }
 
         return quadro;
     }
 
+    private void crc() {
+        CRC32 crc32 = new CRC32();
+        crc32.update(quadro[INDICE_DESTINO]);
+        crc32.update(quadro[INDICE_FONTE]);
+        crc32.update(quadro[INDICE_LENGHT]);
+        crc32.update(quadro[INDICE_DADOS]);
+        ByteBuffer b = ByteBuffer.allocate(4);
+
+        b.putLong(crc32.getValue());
+        quadro[INDICE_CRC] = b.array();
+
+    }
+
+    private void padding() {
+
+    }
 
 
     private void definePreambulo() {
@@ -82,11 +104,11 @@ public class Quadro {
     }
 
     private void setDados(String dados) {
-        //quadro[ind_dados] = dados;
+        byte[] bytes = dados.getBytes();
+        quadro[INDICE_DADOS] = bytes;
     }
 
-    private void setTamanho(String dados) {
-        int tamanho = dados.length();
+    private void setTamanho(int tamanho) {
         quadro[INDICE_LENGHT][0] = (byte) (tamanho & 0xFF);
         quadro[INDICE_LENGHT][1] = (byte) ((tamanho >> 8) & 0xFF);
     }
