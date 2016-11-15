@@ -53,13 +53,14 @@ public class Quadro {
     }
 
     private void crc() {
+        //classe que realiza algoritmo de crc
         CRC32 crc32 = new CRC32();
         crc32.update(quadro[INDICE_DESTINO]);
         crc32.update(quadro[INDICE_FONTE]);
         crc32.update(quadro[INDICE_LENGHT]);
         crc32.update(quadro[INDICE_DADOS]);
-        ByteBuffer b = ByteBuffer.allocate(4);
 
+        ByteBuffer b = ByteBuffer.allocate(4);
         b.putLong(crc32.getValue());
         quadro[INDICE_CRC] = b.array();
 
