@@ -1,6 +1,8 @@
 package sample;
 
+import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Arrays;
 import java.util.zip.CRC32;
 
@@ -9,7 +11,7 @@ import java.util.zip.CRC32;
  * <p>
  * Created by edupooch
  */
-public class Quadro {
+public abstract class Quadro {
 
     /**
      * ÍNDICES NO ARRAY DE BYTE ARRAY QUADRO, CADA UM DESSES INDICES CONTÉM UM ARRAY DE BYTES QUE REPRESENTAM UMA PARTE
@@ -20,15 +22,15 @@ public class Quadro {
     private static final int INDICE_FONTE = 2;
     private static final int INDICE_DESTINO = 3;
     private static final int INDICE_LENGHT = 4;
-    private static final int INDICE_DADOS = 5; //PODE CONTER O PADDING TB
+    private static final int INDICE_DADOS = 5; //PODE CONTER O PADDING
     private static final int INDICE_CRC = 6;
 
     /**
      * Tamanhos padronizados pela IEE 802.3
      */
-    public static final int TAMANHO_MINIMO_DADOS = 46;
+    private static final int TAMANHO_MINIMO_DADOS = 46;
     private static final int TAMANHO_PREAMBULO = 7;
-    public static final int TAMANHO_MAXIMO_DADOS = 1500;
+    private static final int TAMANHO_MAXIMO_DADOS = 1500;
 
     /**
      * Padrões de bits do preâmbulo e start of frame
@@ -42,10 +44,14 @@ public class Quadro {
     private static byte[][] quadro;
 
 
-    public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
+    public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) {
 
         if (dados.length() > TAMANHO_MAXIMO_DADOS) {
-            throw new QuadroException("Tamanho dos dados muito grande");
+            try {
+                throw new QuadroException("Tamanho dos dados muito grande");
+            } catch (QuadroException e) {
+                e.printStackTrace();
+            }
         } else {
             quadro = new byte[7][];
             definePreambulo();
@@ -80,6 +86,8 @@ public class Quadro {
 
         for (int i = 0; i < tamanhoEnderecoDestino; i++) {
             quadro[INDICE_DESTINO][i] = (byte) (Integer.parseInt(stringsEnderecos[i], 16) & 0xff);
+
+
         }
 
     }
@@ -131,8 +139,9 @@ public class Quadro {
 
         ByteBuffer b = ByteBuffer.allocate(4);
         int valorCRC = (int) crc32.getValue();
-
+        System.out.println("CRC = " + valorCRC);
         b.putInt(valorCRC);
+
 
         quadro[INDICE_CRC] = b.array();
 
@@ -149,4 +158,38 @@ public class Quadro {
 
         return low | (high << 8);
     }
+
+    public static String getDescricao(byte[][] quadro) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Prelúdio: ");
+        for (byte pre :
+                quadro[INDICE_PREAMBULO]) {
+            stringBuilder.append(Integer.toString(pre+128,2));
+        }
+
+        stringBuilder.append("\nStart of Frame: ").append(Integer.toString(quadro[INDICE_SOF][0]+128,2));
+
+        stringBuilder.append("\nEndereço de Destino: ");
+
+
+        String destino = DatatypeConverter.printHexBinary(quadro[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
+        stringBuilder.append(destino.substring(0,destino.length()-1));
+
+        stringBuilder.append("\nEndereço da Fonte: ");
+        String fonte = DatatypeConverter.printHexBinary(quadro[INDICE_FONTE]).replaceAll("(.{2})", "$1:");
+        stringBuilder.append(destino.substring(0,fonte.length()-1));
+
+        stringBuilder.append("\nTamanho dos Dados: ");
+        stringBuilder.append(getTamanhoDados(quadro)).append(" bytes");
+
+        stringBuilder.append("\nDados: ");
+        stringBuilder.append(new String(quadro[INDICE_DADOS]));
+
+        stringBuilder.append("\nCRC-32: ");
+        ByteBuffer buffer = ByteBuffer.wrap(quadro[INDICE_CRC]);
+        stringBuilder.append(buffer.getInt());
+
+        return stringBuilder.toString();
+    }
+
 }
