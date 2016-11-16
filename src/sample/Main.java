@@ -22,7 +22,6 @@ public class Main extends Application {
         Object x;
 
 
-
         System.out.println();
 
     }
