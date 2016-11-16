@@ -6,7 +6,7 @@ import java.util.zip.CRC32;
 
 /**
  * Classe que contém os métodos de criação de um quadro
- *
+ * <p>
  * Created by edupooch
  */
 public class Quadro {
@@ -14,7 +14,6 @@ public class Quadro {
     /**
      * ÍNDICES NO ARRAY DE BYTE ARRAY QUADRO, CADA UM DESSES INDICES CONTÉM UM ARRAY DE BYTES QUE REPRESENTAM UMA PARTE
      * DO QUADRO
-     *
      */
     private static final int INDICE_PREAMBULO = 0;
     private static final int INDICE_SOF = 1;
@@ -28,7 +27,7 @@ public class Quadro {
      * Tamanhos padronizados pela IEE 802.3
      */
     public static final int TAMANHO_MINIMO_DADOS = 46;
-    private static final int TAMANHO_PREAMBULO = 8;
+    private static final int TAMANHO_PREAMBULO = 7;
     public static final int TAMANHO_MAXIMO_DADOS = 1500;
 
     /**
@@ -43,10 +42,10 @@ public class Quadro {
     private static byte[][] quadro;
 
 
-    public byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
+    public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
 
         if (dados.length() > TAMANHO_MAXIMO_DADOS) {
-            throw new QuadroException("Tamanho dos dados muito grade");
+            throw new QuadroException("Tamanho dos dados muito grande");
         } else {
             quadro = new byte[7][];
             definePreambulo();
@@ -61,9 +60,7 @@ public class Quadro {
     }
 
 
-
-
-    private void definePreambulo() {
+    private static void definePreambulo() {
         quadro[INDICE_PREAMBULO] = new byte[TAMANHO_PREAMBULO];
         for (int i = 0; i < TAMANHO_PREAMBULO; i++) {
             quadro[INDICE_PREAMBULO][i] = PADRAO_PREAMBULO;
@@ -71,12 +68,12 @@ public class Quadro {
         defineSOF();
     }
 
-    private void defineSOF() {
+    private static void defineSOF() {
         quadro[INDICE_SOF] = new byte[1];
         quadro[INDICE_SOF][0] = PADRAO_SOF;
     }
 
-    private void setEnderecoDestino(String enderecoDestino) {
+    private static void setEnderecoDestino(String enderecoDestino) {
         String[] stringsEnderecos = enderecoDestino.split(":");
         int tamanhoEnderecoDestino = stringsEnderecos.length;
         quadro[INDICE_DESTINO] = new byte[tamanhoEnderecoDestino];
@@ -87,7 +84,7 @@ public class Quadro {
 
     }
 
-    private void setEndrecoFonte(String enderecoFonte) {
+    private static void setEndrecoFonte(String enderecoFonte) {
         String[] stringsEnderecos = enderecoFonte.split(":");
         int tamanhoEnderecoFonte = stringsEnderecos.length;
         quadro[INDICE_FONTE] = new byte[tamanhoEnderecoFonte];
@@ -97,14 +94,14 @@ public class Quadro {
         }
     }
 
-    private void setTamanho(int tamanho) {
+    private static void setTamanho(int tamanho) {
         quadro[INDICE_LENGHT] = new byte[2];
 
         quadro[INDICE_LENGHT][0] = (byte) (tamanho & 0xFF);
         quadro[INDICE_LENGHT][1] = (byte) ((tamanho >> 8) & 0xFF);
     }
 
-    private void setDados(String dados) {
+    private static void setDados(String dados) {
         byte[] bytes = dados.getBytes();
         if (bytes.length < TAMANHO_MINIMO_DADOS) {
             padding(bytes);
@@ -115,15 +112,16 @@ public class Quadro {
 
     /**
      * Preenche o array de dados com 0's para atingir o tamanho minimo de 46 bytes previsto pelo padrão
+     *
      * @param bytesDados array de bytes com os dados que serão preenchidos
      */
-    private void padding(byte[] bytesDados) {
+    private static void padding(byte[] bytesDados) {
         byte[] dadosComPadding = new byte[TAMANHO_MINIMO_DADOS];
-        System.arraycopy(bytesDados, 0, dadosComPadding, 0,TAMANHO_MINIMO_DADOS - bytesDados.length);
+        System.arraycopy(bytesDados, 0, dadosComPadding, 0, TAMANHO_MINIMO_DADOS - (TAMANHO_MINIMO_DADOS - bytesDados.length));
         quadro[INDICE_DADOS] = dadosComPadding;
     }
 
-    private void crc() {
+    private static void crc() {
         //classe que realiza algoritmo de crc
         CRC32 crc32 = new CRC32();
         crc32.update(quadro[INDICE_DESTINO]);
@@ -132,18 +130,20 @@ public class Quadro {
         crc32.update(quadro[INDICE_DADOS]);
 
         ByteBuffer b = ByteBuffer.allocate(4);
-        b.putLong(crc32.getValue());
+        int valorCRC = (int) crc32.getValue();
+
+        b.putInt(valorCRC);
 
         quadro[INDICE_CRC] = b.array();
 
     }
-    
+
     /**
      * Tamanho dos dados pegando dois bytes do quadro que representam o tamanho e convertem pra int
      *
      * @return int com o tamanho dos dados
      */
-    public int getTamanhoDados() {
+    public static int getTamanhoDados(byte[][] quadro) {
         int high = quadro[INDICE_LENGHT][1] >= 0 ? quadro[INDICE_LENGHT][1] : 256 + quadro[INDICE_LENGHT][1];
         int low = quadro[INDICE_LENGHT][0] >= 0 ? quadro[INDICE_LENGHT][0] : 256 + quadro[INDICE_LENGHT][0];
 
