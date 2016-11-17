@@ -1,9 +1,7 @@
 package sample;
 
-/**
- * Created by eduardo-pooch on 16/11/2016.
- */
-public class Estação {
+
+public class Estação implements Runnable {
     private String macUnicast;
     private String macMulticast;
 
@@ -31,10 +29,10 @@ public class Estação {
      * Envia uma informação para um endereço, pode ser unicast, multicast ou broadcast
      *
      * @param conteudo string
-     * @param endereço destino
+     * @param endereco destino
      */
-    public void envia(String conteudo, String endereço) {
-
+    public void envia(String conteudo, String endereco) {
+        byte[][] quadro = Quadro.criaQuadro(endereco,this.getMacUnicast(),conteudo);
     }
 
 
@@ -44,7 +42,7 @@ public class Estação {
      * @param conteudo quando é passado por parametro apenas o conteudo é feito um envio broadcast
      */
     public void envia(String conteudo) {
-
+        byte[][] quadro = Quadro.criaQuadro(MAC_BROADCAST,this.getMacUnicast(),conteudo);
     }
 
 
@@ -57,4 +55,8 @@ public class Estação {
     }
 
 
+    @Override
+    public void run() {
+
+    }
 }

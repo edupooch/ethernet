@@ -159,25 +159,35 @@ public abstract class Quadro {
         return low | (high << 8);
     }
 
+    public static int getTamanhoTotal(byte[][] quadro){
+        int tamanho = 0;
+        for (byte[] array : quadro) tamanho += array.length;
+        return tamanho;
+    }
+
     public static String getDescricao(byte[][] quadro) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Prelúdio: ");
+
+        stringBuilder.append("\nTamanho total: ");
+        stringBuilder.append(getTamanhoTotal(quadro)).append(" bytes");
+
+        stringBuilder.append("\nPrelúdio: ");
         for (byte pre :
                 quadro[INDICE_PREAMBULO]) {
-            stringBuilder.append(Integer.toString(pre+128,2));
+            stringBuilder.append(Integer.toString(pre + 128, 2));
         }
 
-        stringBuilder.append("\nStart of Frame: ").append(Integer.toString(quadro[INDICE_SOF][0]+128,2));
+        stringBuilder.append("\nStart of Frame: ").append(Integer.toString(quadro[INDICE_SOF][0] + 128, 2));
 
         stringBuilder.append("\nEndereço de Destino: ");
 
 
         String destino = DatatypeConverter.printHexBinary(quadro[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
-        stringBuilder.append(destino.substring(0,destino.length()-1));
+        stringBuilder.append(destino.substring(0, destino.length() - 1));
 
         stringBuilder.append("\nEndereço da Fonte: ");
         String fonte = DatatypeConverter.printHexBinary(quadro[INDICE_FONTE]).replaceAll("(.{2})", "$1:");
-        stringBuilder.append(destino.substring(0,fonte.length()-1));
+        stringBuilder.append(destino.substring(0, fonte.length() - 1));
 
         stringBuilder.append("\nTamanho dos Dados: ");
         stringBuilder.append(getTamanhoDados(quadro)).append(" bytes");
@@ -188,6 +198,9 @@ public abstract class Quadro {
         stringBuilder.append("\nCRC-32: ");
         ByteBuffer buffer = ByteBuffer.wrap(quadro[INDICE_CRC]);
         stringBuilder.append(buffer.getInt());
+
+
+
 
         return stringBuilder.toString();
     }
