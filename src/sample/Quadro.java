@@ -180,14 +180,11 @@ public abstract class Quadro {
         stringBuilder.append("\nStart of Frame: ").append(Integer.toString(quadro[INDICE_SOF][0] + 128, 2));
 
         stringBuilder.append("\nEndereço de Destino: ");
-
-
-        String destino = DatatypeConverter.printHexBinary(quadro[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
-        stringBuilder.append(destino.substring(0, destino.length() - 1));
+        stringBuilder.append(getEnderecoDestino(quadro));
 
         stringBuilder.append("\nEndereço da Fonte: ");
         String fonte = DatatypeConverter.printHexBinary(quadro[INDICE_FONTE]).replaceAll("(.{2})", "$1:");
-        stringBuilder.append(destino.substring(0, fonte.length() - 1));
+        stringBuilder.append(fonte.substring(0, fonte.length() - 1));
 
         stringBuilder.append("\nTamanho dos Dados: ");
         stringBuilder.append(getTamanhoDados(quadro)).append(" bytes");
@@ -205,4 +202,8 @@ public abstract class Quadro {
         return stringBuilder.toString();
     }
 
+    public static String getEnderecoDestino(byte[][] infoRecebida) {
+        String destino = DatatypeConverter.printHexBinary(quadro[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
+        return  destino.substring(0, destino.length() - 1).toUpperCase();
+    }
 }
