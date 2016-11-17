@@ -2,33 +2,31 @@ package sample;
 
 public class Meio {
 
-    private Object info;
+    private static Object infoMeio;
 
-    public Object getInfo() {
-        return info;
+    public static Object getInfo() {
+        return infoMeio;
     }
 
-    private void setInfo(Object info) {
-        this.info = info;
+    private static void setInfoMeio(Object object) {
+        infoMeio = object;
     }
 
-    public void transimitir(Object info) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                setInfo(info);
-                try {
-                    byte[][] infoBytes = (byte[][]) info;
-                    int tamanho = Quadro.getTamanhoTotal(infoBytes);
+    public static void transimitir(Object infoRecebida) {
+        new Thread(() -> {
+            System.out.println("quadro sendo transmitido");
+            setInfoMeio(infoRecebida);
+            try {
+                byte[][] infoBytes = (byte[][]) infoRecebida;
+                int tamanho = Quadro.getTamanhoTotal(infoBytes);
 
-                    //Simulação do comportamento de transimissão à 10Mbits/s -> 1 byte a cada 0.0008ms
-                    Thread.sleep((long) (tamanho*0.0008));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                setInfo(null);
+                //Simulação do comportamento de transimissão à 10Mbits/s -> 1 byte a cada 0.0008ms: tamanho*0.0008
+                Thread.sleep((long) (tamanho*0.0008));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
+            setInfoMeio(null);
+        }).start();
     }
 
 }

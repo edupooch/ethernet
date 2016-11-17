@@ -139,7 +139,7 @@ public abstract class Quadro {
 
         ByteBuffer b = ByteBuffer.allocate(4);
         int valorCRC = (int) crc32.getValue();
-        System.out.println("CRC = " + valorCRC);
+
         b.putInt(valorCRC);
 
 

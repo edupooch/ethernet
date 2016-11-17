@@ -1,13 +1,14 @@
 package sample;
 
 
-public class Estação implements Runnable {
+public class Estacao implements Runnable {
     private String macUnicast;
     private String macMulticast;
 
     public static final String MAC_BROADCAST = "ff:ff:ff:ff:ff:ff";
+    private byte[][] ultimaInfo;
 
-    public Estação(String macUnicast, String macMulticast) {
+    public Estacao(String macUnicast, String macMulticast) {
         this.macUnicast = macUnicast;
         this.macMulticast = macMulticast;
     }
@@ -18,9 +19,10 @@ public class Estação implements Runnable {
      * @param conteudo string
      * @param destino  é um objeto do tipo estação
      */
-    public void envia(String conteudo, Estação destino) {
+    public void envia(String conteudo, Estacao destino) {
 
         byte[][] quadro = Quadro.criaQuadro(destino.getMacUnicast(),this.getMacUnicast(),conteudo);
+        Meio.transimitir(quadro);
 
     }
 
@@ -33,6 +35,7 @@ public class Estação implements Runnable {
      */
     public void envia(String conteudo, String endereco) {
         byte[][] quadro = Quadro.criaQuadro(endereco,this.getMacUnicast(),conteudo);
+        Meio.transimitir(quadro);
     }
 
 
@@ -43,6 +46,7 @@ public class Estação implements Runnable {
      */
     public void envia(String conteudo) {
         byte[][] quadro = Quadro.criaQuadro(MAC_BROADCAST,this.getMacUnicast(),conteudo);
+        Meio.transimitir(quadro);
     }
 
 
@@ -57,6 +61,22 @@ public class Estação implements Runnable {
 
     @Override
     public void run() {
+            while (true){
+                try {
+                    Thread.sleep((long) 0.001);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (Meio.getInfo() != null) {
+                    byte[][] infoRecebida = (byte[][]) Meio.getInfo();
 
+                    if (infoRecebida != ultimaInfo){
+                        ultimaInfo = infoRecebida;
+                        System.out.println("Info RECEBIDA: " + Quadro.getDescricao(infoRecebida));
+                    }
+
+
+                }
+            }
     }
 }

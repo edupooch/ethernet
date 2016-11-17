@@ -21,6 +21,7 @@ public class Main extends Application {
 
 
 
+
         Controller controller = new Controller();
         controller.inicia();
     }
