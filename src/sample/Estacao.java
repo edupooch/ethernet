@@ -55,15 +55,16 @@ class Estacao implements Runnable {
             //verifica se o meio está ocupado (Algoritmo backoff exponencial binário)
             int colisoes = 0;
             while (Meio.getInfo() != null) {
-                System.out.println("MEIO OCUPADO");
+                System.out.println("MEIO OCUPADO PARA A TRANSMISSAO NA ESTAÇÃO " + getMacUnicast());
                 colisoes++;
                 int m = (int) (Math.pow(2, colisoes) - 1);
                 int random = new Random().nextInt(m);
-                double timeSlot = 0.5; //é 51.2 microsec no padrão, mas para a simulação utilizei 0.5 ms (500μs)
-                System.out.println("Esperar" + random * timeSlot + "milissegundos");
+                double timeSlot = 0.0512; //é 51.2 microsec no padrão, para a simulação utilizei 0.512 ms
+                double tempoEspera = random * timeSlot;
+                System.out.println("Esperar " + String.format("%.3f",tempoEspera) + " milissegundos");
 
                 try {
-                    Thread.sleep((long) (random * timeSlot));
+                    Thread.sleep((long) tempoEspera);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -100,7 +101,15 @@ class Estacao implements Runnable {
                     if (destino.equals(getMacUnicast()) || destino.equals(getMacMulticast()) ||
                             destino.equals(MAC_BROADCAST)) {
                         ultimaInfo = infoRecebida;
-                        System.out.println("QUADRO RECEBIDO EM : " + getMacUnicast() + Quadro.getDescricao(infoRecebida));
+
+                        if (Quadro.leValorCRC(infoRecebida) == Quadro.criaValorCRC(infoRecebida)){
+                            System.out.println("QUADRO RECEBIDO EM : " + getMacUnicast() + Quadro.getDescricao(infoRecebida));
+                        } else {
+                            System.out.println("QUADRO RECEBIDO EM : " + getMacUnicast() + "FOI DESCARTADO (ERRO NO CRC)");
+                        }
+
+
+
                     }
 
                 }

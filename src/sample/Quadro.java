@@ -129,21 +129,17 @@ abstract class Quadro {
 
     private static void crc() {
         //classe que realiza algoritmo de crc
-        CRC32 crc32 = new CRC32();
-        crc32.update(quadro[INDICE_DESTINO]);
-        crc32.update(quadro[INDICE_FONTE]);
-        crc32.update(quadro[INDICE_LENGHT]);
-        crc32.update(quadro[INDICE_DADOS]);
+        int valorCRC = criaValorCRC(quadro);
 
         ByteBuffer b = ByteBuffer.allocate(4);
-        int valorCRC = (int) crc32.getValue();
-
         b.putInt(valorCRC);
 
 
         quadro[INDICE_CRC] = b.array();
 
     }
+
+
 
     /**
      * Tamanho dos dados pegando dois bytes do quadro que representam o tamanho e convertem pra int
@@ -192,8 +188,7 @@ abstract class Quadro {
         stringBuilder.append(new String(quadro[INDICE_DADOS]));
 
         stringBuilder.append("\nCRC-32: ");
-        ByteBuffer buffer = ByteBuffer.wrap(quadro[INDICE_CRC]);
-        stringBuilder.append(buffer.getInt());
+        stringBuilder.append(leValorCRC(quadro));
 
         stringBuilder.append("\n------------------------------------------\n");
 
@@ -201,8 +196,24 @@ abstract class Quadro {
         return stringBuilder.toString();
     }
 
-    public static String getEnderecoDestino(byte[][] infoRecebida) {
+    public static int leValorCRC(byte[][] quadro) {
+        ByteBuffer buffer = ByteBuffer.wrap(quadro[INDICE_CRC]);
+        return buffer.getInt();
+    }
+
+    static String getEnderecoDestino(byte[][] infoRecebida) {
         String destino = DatatypeConverter.printHexBinary(infoRecebida[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
         return destino.substring(0, destino.length() - 1);
     }
+
+    public static int criaValorCRC(byte[][] quadro) {
+        CRC32 crc32 = new CRC32();
+        crc32.update(quadro[INDICE_DESTINO]);
+        crc32.update(quadro[INDICE_FONTE]);
+        crc32.update(quadro[INDICE_LENGHT]);
+        crc32.update(quadro[INDICE_DADOS]);
+
+        return (int) crc32.getValue();
+    }
+
 }

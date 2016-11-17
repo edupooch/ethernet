@@ -14,20 +14,20 @@ class Meio {
 
     public static void transimitir(Object infoRecebida) {
         new Thread(() -> {
-            System.out.println("Transmitindo quadro");
+            System.out.println("Transmitindo quadro...\n");
 
 
             setInfoMeio(infoRecebida);
-            //      try {
+                  try {
             byte[][] infoBytes = (byte[][]) infoRecebida;
             int tamanho = Quadro.getTamanhoTotal(infoBytes);
 
             //Simulação do comportamento de transimissão à 10Mbits/s -> 1 byte a cada 0.0008ms: tamanho*0.0008
-            // Thread.sleep((long) (tamanho*0.0008));
-            //      } catch (InterruptedException e) {
-            //           e.printStackTrace();
-            //         }
-            // setInfoMeio(null);
+             Thread.sleep(1*tamanho);
+                  } catch (InterruptedException e) {
+                       e.printStackTrace();
+                     }
+            setInfoMeio(null);
         }).start();
     }
 
