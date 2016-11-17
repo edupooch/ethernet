@@ -2,8 +2,6 @@ package sample;
 
 import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
-import java.nio.channels.InterruptedByTimeoutException;
-import java.util.Arrays;
 import java.util.zip.CRC32;
 
 /**
@@ -11,7 +9,7 @@ import java.util.zip.CRC32;
  * <p>
  * Created by edupooch
  */
-public abstract class Quadro {
+abstract class Quadro {
 
     /**
      * ÍNDICES NO ARRAY DE BYTE ARRAY QUADRO, CADA UM DESSES INDICES CONTÉM UM ARRAY DE BYTES QUE REPRESENTAM UMA PARTE
@@ -152,14 +150,14 @@ public abstract class Quadro {
      *
      * @return int com o tamanho dos dados
      */
-    public static int getTamanhoDados(byte[][] quadro) {
+    private static int getTamanhoDados(byte[][] quadro) {
         int high = quadro[INDICE_LENGHT][1] >= 0 ? quadro[INDICE_LENGHT][1] : 256 + quadro[INDICE_LENGHT][1];
         int low = quadro[INDICE_LENGHT][0] >= 0 ? quadro[INDICE_LENGHT][0] : 256 + quadro[INDICE_LENGHT][0];
 
         return low | (high << 8);
     }
 
-    public static int getTamanhoTotal(byte[][] quadro){
+    public static int getTamanhoTotal(byte[][] quadro) {
         int tamanho = 0;
         for (byte[] array : quadro) tamanho += array.length;
         return tamanho;
@@ -200,13 +198,11 @@ public abstract class Quadro {
         stringBuilder.append("\n------------------------------------------\n");
 
 
-
-
         return stringBuilder.toString();
     }
 
     public static String getEnderecoDestino(byte[][] infoRecebida) {
         String destino = DatatypeConverter.printHexBinary(infoRecebida[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
-        return  destino.substring(0, destino.length() - 1);
+        return destino.substring(0, destino.length() - 1);
     }
 }

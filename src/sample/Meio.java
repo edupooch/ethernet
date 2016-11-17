@@ -1,6 +1,6 @@
 package sample;
 
-public class Meio {
+class Meio {
 
     private static Object infoMeio;
 
@@ -18,16 +18,16 @@ public class Meio {
 
 
             setInfoMeio(infoRecebida);
-            try {
-                byte[][] infoBytes = (byte[][]) infoRecebida;
-                int tamanho = Quadro.getTamanhoTotal(infoBytes);
+            //      try {
+            byte[][] infoBytes = (byte[][]) infoRecebida;
+            int tamanho = Quadro.getTamanhoTotal(infoBytes);
 
-                //Simulação do comportamento de transimissão à 10Mbits/s -> 1 byte a cada 0.0008ms: tamanho*0.0008
-                Thread.sleep((long) (tamanho*0.0008));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            setInfoMeio(null);
+            //Simulação do comportamento de transimissão à 10Mbits/s -> 1 byte a cada 0.0008ms: tamanho*0.0008
+            // Thread.sleep((long) (tamanho*0.0008));
+            //      } catch (InterruptedException e) {
+            //           e.printStackTrace();
+            //         }
+            // setInfoMeio(null);
         }).start();
     }
 

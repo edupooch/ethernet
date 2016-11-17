@@ -1,16 +1,13 @@
 package sample;
 
 
-import javax.sql.rowset.BaseRowSet;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Estacao implements Runnable {
-    private String macUnicast;
-    private String macMulticast;
-
-    public static final String MAC_BROADCAST = "FF:FF:FF:FF:FF:FF";
-
+class Estacao implements Runnable {
+    private static final String MAC_BROADCAST = "FF:FF:FF:FF:FF:FF";
+    private final String macUnicast;
+    private final String macMulticast;
     private byte[][] ultimaInfo;
 
     public Estacao(String macUnicast, String macMulticast) {
@@ -57,16 +54,16 @@ public class Estacao implements Runnable {
         new Thread(() -> {
             //verifica se o meio está ocupado (Algoritmo backoff exponencial binário)
             int colisoes = 0;
-            while(Meio.getInfo() != null){
+            while (Meio.getInfo() != null) {
                 System.out.println("MEIO OCUPADO");
                 colisoes++;
-                int m = (int) (Math.pow(2,colisoes) - 1);
+                int m = (int) (Math.pow(2, colisoes) - 1);
                 int random = new Random().nextInt(m);
                 double timeSlot = 0.5; //é 51.2 microsec no padrão, mas para a simulação utilizei 0.5 ms (500μs)
-                System.out.println("Esperar" + random*timeSlot + "milissegundos");
+                System.out.println("Esperar" + random * timeSlot + "milissegundos");
 
                 try {
-                    Thread.sleep((long) (random*timeSlot));
+                    Thread.sleep((long) (random * timeSlot));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -76,11 +73,11 @@ public class Estacao implements Runnable {
     }
 
 
-    public String getMacUnicast() {
+    private String getMacUnicast() {
         return macUnicast;
     }
 
-    public String getMacMulticast() {
+    private String getMacMulticast() {
         return macMulticast;
     }
 
@@ -103,7 +100,7 @@ public class Estacao implements Runnable {
                     if (destino.equals(getMacUnicast()) || destino.equals(getMacMulticast()) ||
                             destino.equals(MAC_BROADCAST)) {
                         ultimaInfo = infoRecebida;
-                        System.out.println("QUADRO RECEBIDO EM : " +getMacUnicast() + Quadro.getDescricao(infoRecebida));
+                        System.out.println("QUADRO RECEBIDO EM : " + getMacUnicast() + Quadro.getDescricao(infoRecebida));
                     }
 
                 }
