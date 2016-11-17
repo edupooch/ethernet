@@ -168,6 +168,7 @@ public abstract class Quadro {
     public static String getDescricao(byte[][] quadro) {
         StringBuilder stringBuilder = new StringBuilder();
 
+        stringBuilder.append("\n------------------------------------------");
         stringBuilder.append("\nTamanho total: ");
         stringBuilder.append(getTamanhoTotal(quadro)).append(" bytes");
 
@@ -196,6 +197,8 @@ public abstract class Quadro {
         ByteBuffer buffer = ByteBuffer.wrap(quadro[INDICE_CRC]);
         stringBuilder.append(buffer.getInt());
 
+        stringBuilder.append("\n------------------------------------------\n");
+
 
 
 
@@ -203,7 +206,7 @@ public abstract class Quadro {
     }
 
     public static String getEnderecoDestino(byte[][] infoRecebida) {
-        String destino = DatatypeConverter.printHexBinary(quadro[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
-        return  destino.substring(0, destino.length() - 1).toUpperCase();
+        String destino = DatatypeConverter.printHexBinary(infoRecebida[INDICE_DESTINO]).replaceAll("(.{2})", "$1:");
+        return  destino.substring(0, destino.length() - 1);
     }
 }

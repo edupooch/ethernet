@@ -9,9 +9,9 @@ public class Controller {
 
     public void inicia() {
         //Iniciando as estações com seu endereço unicast e multicast
-        estacao1 = new Estacao("00:0A:95:9D:68:16","01:00:5E:00:00:AB");
-        estacao2 = new Estacao("00:0A:95:9D:68:17","01:00:5E:00:00:AB");
-        estacao3 = new Estacao("00:0A:95:9D:68:18","01:00:5E:00:0E:AA");
+        estacao1 = new Estacao("00:0A:95:9D:68:01","01:00:5E:00:00:AB");
+        estacao2 = new Estacao("00:0A:95:9D:68:02","01:00:5E:00:00:AB");
+        estacao3 = new Estacao("00:0A:95:9D:68:03","01:00:5E:00:0E:AA");
 
         //Ativando a thread que fica esperando pra receber dados
         Thread threadEstacao1 = new Thread(estacao1);

@@ -14,7 +14,9 @@ public class Meio {
 
     public static void transimitir(Object infoRecebida) {
         new Thread(() -> {
-            System.out.println("quadro sendo transmitido");
+            System.out.println("Transmitindo quadro");
+
+
             setInfoMeio(infoRecebida);
             try {
                 byte[][] infoBytes = (byte[][]) infoRecebida;

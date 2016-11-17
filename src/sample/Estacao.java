@@ -10,6 +10,7 @@ public class Estacao implements Runnable {
     private String macMulticast;
 
     public static final String MAC_BROADCAST = "FF:FF:FF:FF:FF:FF";
+
     private byte[][] ultimaInfo;
 
     public Estacao(String macUnicast, String macMulticast) {
@@ -94,18 +95,13 @@ public class Estacao implements Runnable {
             }
             if (Meio.getInfo() != null) {
                 byte[][] infoRecebida = (byte[][]) Meio.getInfo();
-                System.out.println("info != null");
                 if (!Arrays.deepEquals(infoRecebida, ultimaInfo)) {
-                    System.out.println("info != ultima");
 
                     //Verifica se o destino é essa estação:
                     String destino = Quadro.getEnderecoDestino(infoRecebida);
 
                     if (destino.equals(getMacUnicast()) || destino.equals(getMacMulticast()) ||
                             destino.equals(MAC_BROADCAST)) {
-                        System.out.println("destino ok");
-
-
                         ultimaInfo = infoRecebida;
                         System.out.println("QUADRO RECEBIDO EM : " +getMacUnicast() + Quadro.getDescricao(infoRecebida));
                     }
