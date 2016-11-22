@@ -19,7 +19,7 @@ abstract class Quadro {
     private static final int INDICE_SOF = 1;
     private static final int INDICE_FONTE = 2;
     private static final int INDICE_DESTINO = 3;
-    private static final int INDICE_LENGHT = 4;
+    private static final int INDICE_LENGTH = 4;
     private static final int INDICE_DADOS = 5; //PODE CONTER O PADDING
     private static final int INDICE_CRC = 6;
 
@@ -42,7 +42,7 @@ abstract class Quadro {
     private static byte[][] quadro;
 
 
-    public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
+    static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
 
         if (dados.length() > TAMANHO_MAXIMO_DADOS) {
             throw new QuadroException("Tamanho dos dados muito grande",dados.length());
@@ -97,10 +97,10 @@ abstract class Quadro {
     }
 
     private static void setTamanho(int tamanho) {
-        quadro[INDICE_LENGHT] = new byte[2];
+        quadro[INDICE_LENGTH] = new byte[2];
 
-        quadro[INDICE_LENGHT][0] = (byte) (tamanho & 0xFF);
-        quadro[INDICE_LENGHT][1] = (byte) ((tamanho >> 8) & 0xFF);
+        quadro[INDICE_LENGTH][0] = (byte) (tamanho & 0xFF);
+        quadro[INDICE_LENGTH][1] = (byte) ((tamanho >> 8) & 0xFF);
     }
 
     private static void setDados(String dados) {
@@ -142,19 +142,19 @@ abstract class Quadro {
      * @return int com o tamanho dos dados
      */
     private static int getTamanhoDados(byte[][] quadro) {
-        int high = quadro[INDICE_LENGHT][1] >= 0 ? quadro[INDICE_LENGHT][1] : 256 + quadro[INDICE_LENGHT][1];
-        int low = quadro[INDICE_LENGHT][0] >= 0 ? quadro[INDICE_LENGHT][0] : 256 + quadro[INDICE_LENGHT][0];
+        int high = quadro[INDICE_LENGTH][1] >= 0 ? quadro[INDICE_LENGTH][1] : 256 + quadro[INDICE_LENGTH][1];
+        int low = quadro[INDICE_LENGTH][0] >= 0 ? quadro[INDICE_LENGTH][0] : 256 + quadro[INDICE_LENGTH][0];
 
         return low | (high << 8);
     }
 
-    public static int getTamanhoTotal(byte[][] quadro) {
+    static int getTamanhoTotal(byte[][] quadro) {
         int tamanho = 0;
         for (byte[] array : quadro) tamanho += array.length;
         return tamanho;
     }
 
-    public static String getDescricao(byte[][] quadro) {
+    static String getDescricao(byte[][] quadro) {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append("\n------------------------------------------");
@@ -164,10 +164,12 @@ abstract class Quadro {
         stringBuilder.append("\nPrelúdio: ");
         for (byte pre :
                 quadro[INDICE_PREAMBULO]) {
-            stringBuilder.append(Integer.toString(pre + 128, 2));
+            String s = String.format("%8s", Integer.toBinaryString(pre & 0xFF)).replace(' ', '0');
+            stringBuilder.append(s);
         }
 
-        stringBuilder.append("\nStart of Frame: ").append(Integer.toString(quadro[INDICE_SOF][0] + 128, 2));
+        stringBuilder.append("\nStart of Frame: ")
+                .append(String.format("%8s", Integer.toBinaryString(quadro[INDICE_SOF][0] & 0xFF)).replace(' ', '0'));
 
         stringBuilder.append("\nEndereço de Destino: ");
         stringBuilder.append(getEnderecoDestino(quadro));
@@ -191,7 +193,7 @@ abstract class Quadro {
         return stringBuilder.toString();
     }
 
-    public static int leValorCRC(byte[][] quadro) {
+    static int leValorCRC(byte[][] quadro) {
         ByteBuffer buffer = ByteBuffer.wrap(quadro[INDICE_CRC]);
         return buffer.getInt();
     }
@@ -201,11 +203,11 @@ abstract class Quadro {
         return destino.substring(0, destino.length() - 1);
     }
 
-    public static int criaValorCRC(byte[][] quadro) {
+    static int criaValorCRC(byte[][] quadro) {
         CRC32 crc32 = new CRC32();
         crc32.update(quadro[INDICE_DESTINO]);
         crc32.update(quadro[INDICE_FONTE]);
-        crc32.update(quadro[INDICE_LENGHT]);
+        crc32.update(quadro[INDICE_LENGTH]);
         crc32.update(quadro[INDICE_DADOS]);
 
         return (int) crc32.getValue();
