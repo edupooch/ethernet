@@ -4,7 +4,7 @@ package modelo;
 import java.util.Arrays;
 import java.util.Random;
 
-class Estacao implements Runnable {
+public class Estacao implements Runnable {
     private static final String MAC_BROADCAST = "FF:FF:FF:FF:FF:FF";
     private final String macUnicast;
     private final String macMulticast;
