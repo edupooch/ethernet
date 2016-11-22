@@ -5,3 +5,5 @@ popularmente conhecido como Ethernet, utilizando a linguagem de programação Ja
 O software simula as técnicas da camada de enlace numa troca de informações entre
 máquinas, como detecção e correção de erros, formatação de quadros e controle de 
 acesso ao meio, de acordo com as definições do padrão IEEE 802.3.
+
+https://docs.google.com/presentation/d/1YMuGFUwTcGM_uKEf8lhmRcnvMhgv8p-izl6KLAmNAOg/edit?usp=sharing
