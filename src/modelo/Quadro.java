@@ -45,7 +45,7 @@ abstract class Quadro {
     public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
 
         if (dados.length() > TAMANHO_MAXIMO_DADOS) {
-            throw new QuadroException("Tamanho dos dados muito grande");
+            throw new QuadroException("Tamanho dos dados muito grande",dados.length());
         } else {
             quadro = new byte[7][];
             definePreambulo();

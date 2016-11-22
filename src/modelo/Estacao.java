@@ -22,16 +22,13 @@ public class Estacao implements Runnable {
      * @param destino  é um objeto do tipo estação
      */
     public void envia(String conteudo, Estacao destino) {
-        byte[][] quadro = new byte[0][];
         try {
-            quadro = Quadro.criaQuadro(destino.getMacUnicast(), this.getMacUnicast(), conteudo);
+            byte[][] quadro = Quadro.criaQuadro(destino.getMacUnicast(), this.getMacUnicast(), conteudo);
+            transmite(quadro);
         } catch (QuadroException e) {
             //Fragmentar nas camadas superiores
             e.printStackTrace();
-
         }
-        transmite(quadro);
-
     }
 
 
@@ -42,14 +39,15 @@ public class Estacao implements Runnable {
      * @param endereco destino
      */
     public void envia(String conteudo, String endereco) {
-        byte[][] quadro = new byte[0][];
+
         try {
-            quadro = Quadro.criaQuadro(endereco, this.getMacUnicast(), conteudo);
+            byte[][] quadro = Quadro.criaQuadro(endereco, this.getMacUnicast(), conteudo);
+            transmite(quadro);
         } catch (QuadroException e) {
             e.printStackTrace();
             //Fragmentar nas camadas superiores
         }
-        transmite(quadro);
+
     }
 
 
@@ -59,14 +57,14 @@ public class Estacao implements Runnable {
      * @param conteudo quando é passado por parametro apenas o conteudo é feito um envio broadcast
      */
     public void envia(String conteudo) {
-        byte[][] quadro = new byte[0][];
+
         try {
-            quadro = Quadro.criaQuadro(MAC_BROADCAST, this.getMacUnicast(), conteudo);
+            byte[][] quadro = Quadro.criaQuadro(MAC_BROADCAST, this.getMacUnicast(), conteudo);
+            transmite(quadro);
         } catch (QuadroException e) {
             e.printStackTrace();
             //Fragmentar nas camadas superiores
         }
-        transmite(quadro);
     }
 
     private void transmite(byte[][] quadro) { //envio dos dados
