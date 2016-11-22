@@ -1,4 +1,4 @@
-package sample;
+package modelo;
 
 import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;

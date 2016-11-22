@@ -1,6 +1,6 @@
-package sample;
+package modelo;
 
-class Meio {
+public class Meio {
 
     private static Object infoMeio;
 

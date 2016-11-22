@@ -1,4 +1,6 @@
-package sample;
+package controle;
+
+import modelo.Estacao;
 
 public class Controller {
 

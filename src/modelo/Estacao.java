@@ -1,4 +1,4 @@
-package sample;
+package modelo;
 
 
 import java.util.Arrays;
