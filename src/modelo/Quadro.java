@@ -42,14 +42,10 @@ abstract class Quadro {
     private static byte[][] quadro;
 
 
-    public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) {
+    public static byte[][] criaQuadro(String enderecoDestino, String enderecoFonte, String dados) throws QuadroException {
 
         if (dados.length() > TAMANHO_MAXIMO_DADOS) {
-            try {
-                throw new QuadroException("Tamanho dos dados muito grande");
-            } catch (QuadroException e) {
-                e.printStackTrace();
-            }
+            throw new QuadroException("Tamanho dos dados muito grande");
         } else {
             quadro = new byte[7][];
             definePreambulo();
@@ -138,7 +134,6 @@ abstract class Quadro {
         quadro[INDICE_CRC] = b.array();
 
     }
-
 
 
     /**
